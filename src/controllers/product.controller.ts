@@ -3,7 +3,7 @@ import { IProduct } from '../interfaces/product.interface.ts';
 import { sendError } from '../exception/sendError.ts';
 import ProductService from '../services/product.service.ts';
 
-export const findAllProducts = async (res: Response): Promise<Response> => {
+export const readAllProducts = async (res: Response): Promise<Response> => {
   try {
     return res.status(200).json({ data: await ProductService.getAll() });
   } catch (err) {
@@ -11,7 +11,7 @@ export const findAllProducts = async (res: Response): Promise<Response> => {
   }
 };
 
-export const findProductById = async (
+export const readProductById = async (
   req: Request,
   res: Response,
 ): Promise<Response> => {
