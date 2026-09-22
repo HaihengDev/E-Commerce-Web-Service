@@ -1,12 +1,16 @@
 import express from 'express';
 import cors from 'cors';
-import { connectDB } from './config/db.ts';
+import productRoute from './routes/product.route.ts';
+import categoryRoute from './routes/category.route.ts';
 import dotenv from 'dotenv';
+import { connectDB } from './config/db.ts';
 dotenv.config();
 
 const app = express();
 app.use(express.json());
 app.use(cors());
+app.use('/api/v1/products', productRoute);
+app.use('/api/v1/categories', categoryRoute);
 
 const PORT = process.env.PORT;
 
