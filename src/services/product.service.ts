@@ -14,13 +14,15 @@ class ProductService {
   }
 
   async add(product: IProduct): Promise<IProduct | null> {
+    // --> add logic for convert image to url
+
     return await ProductRepository.insert(product);
   }
 
   async update(id: string, newProduct: IProduct): Promise<IProduct | null> {
     isValidObejctId(id);
 
-    // add logic for validate
+    // --> add logic for validate
 
     return await ProductRepository.update(id, newProduct);
   }
