@@ -1,8 +1,13 @@
 import mongoose from 'mongoose';
+import bcrypt from 'bcrypt';
 import { appError } from '../exception/appError.ts';
 
 export const isValidObejctId = (id: string): void => {
   if (!mongoose.Types.ObjectId.isValid(id)) {
     throw new appError(400, 'Invalid id format.');
   }
+};
+
+export const hashPassword = async (password: string): Promise<string> => {
+  return await bcrypt.hash(password, 10);
 };
