@@ -13,3 +13,8 @@ export interface IUser {
   password: string;
   role?: UserRole;
 }
+
+export interface IRegisterResponse {
+  user: IUser;
+  token: string;
+}

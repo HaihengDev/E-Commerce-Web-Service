@@ -8,6 +8,15 @@ export const isValidObejctId = (id: string): void => {
   }
 };
 
+export const resourceNotFound = (
+  resource: unknown,
+  name: string = 'data',
+): void => {
+  if (!resource) {
+    throw new appError(404, `${name} not found.`);
+  }
+};
+
 export const hashPassword = async (password: string): Promise<string> => {
   return await bcrypt.hash(password, 10);
 };

@@ -15,7 +15,6 @@ export const register = async (
       telephone,
       username,
       password,
-      role,
     };
 
     return res.status(200).json({
