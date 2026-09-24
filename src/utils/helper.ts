@@ -2,7 +2,7 @@ import mongoose from 'mongoose';
 import bcrypt from 'bcrypt';
 import { appError } from '../exception/appError.ts';
 
-export const isValidObejctId = (id: string): void => {
+export const isValidObjectId = (id: string): void => {
   if (!mongoose.Types.ObjectId.isValid(id)) {
     throw new appError(400, 'Invalid id format.');
   }
