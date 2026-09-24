@@ -17,16 +17,22 @@ class OrderService {
     return order;
   }
 
-  async add(order: IOrder) {
+  async add(order: IOrder): Promise<IOrder | null> {
     // add some logic for decrease stock in product
 
     return await OrderRepository.insert(order);
   }
 
-  async update(id: string, newOrder: IOrder) {
+  async update(id: string, newOrder: IOrder): Promise<IOrder | null> {
     isValidObjectId(id);
 
     // --> logic for count stock and price connect with product
+
+    return await OrderRepository.update(id, newOrder);
+  }
+
+  async remove(id: string): Promise<IOrder | null> {
+    return await OrderRepository.delete(id);
   }
 }
 
