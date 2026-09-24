@@ -2,6 +2,7 @@ import express from 'express';
 import cors from 'cors';
 import productRoute from './routes/product.route.ts';
 import categoryRoute from './routes/category.route.ts';
+import orderRoute from './routes/order.rotue.ts';
 import dotenv from 'dotenv';
 import { connectDB } from './config/db.ts';
 dotenv.config();
@@ -11,6 +12,7 @@ app.use(express.json());
 app.use(cors());
 app.use('/api/v1/products', productRoute);
 app.use('/api/v1/categories', categoryRoute);
+app.use('/api/v1/orders', orderRoute);
 
 const PORT = process.env.PORT;
 
