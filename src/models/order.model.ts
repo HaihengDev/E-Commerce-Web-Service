@@ -3,6 +3,10 @@ import { IOrder, IOrderDetails } from '../interfaces/order.interface.ts';
 
 const orderDetailsSchema = new mongoose.Schema<IOrderDetails>(
   {
+    product_id: {
+      type: String,
+      required: true,
+    },
     product_name: {
       type: String,
       required: true,
