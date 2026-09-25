@@ -1,6 +1,8 @@
 import { isValidObjectId, resourceNotFound } from '../utils/helper.ts';
 import { IOrder } from '../interfaces/order.interface.ts';
+import { appError } from '../exception/appError.ts';
 import OrderRepository from '../repositories/order.repository.ts';
+import ProductRepository from '../repositories/product.repository.ts';
 
 class OrderService {
   async getAll(): Promise<IOrder[]> {
@@ -18,7 +20,14 @@ class OrderService {
   }
 
   async add(order: IOrder): Promise<IOrder | null> {
-    // add some logic for decrease stock in product
+    for (const item of order.orders) {
+      const product = await ProductRepository.decreaseStock(
+        item.product_id,
+        item.quantity,
+      );
+
+      resourceNotFound(product);
+    }
 
     return await OrderRepository.insert(order);
   }

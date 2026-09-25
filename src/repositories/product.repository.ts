@@ -22,18 +22,10 @@ class ProductRepository {
     return await Product.findByIdAndDelete(id);
   }
 
-  async increaseStock(id: string): Promise<IProduct | null> {
+  async decreaseStock(id: string, quantity: number): Promise<IProduct | null> {
     return await Product.findOneAndUpdate(
-      { _id: id, stock: { $gt: 0 } },
-      { $inc: { stock: 1 } },
-      { new: true },
-    );
-  }
-
-  async decreaseStock(id: string): Promise<IProduct | null> {
-    return await Product.findOneAndUpdate(
-      { _id: id, stock: { $gt: 0 } },
-      { $inc: { stock: -1 } },
+      { _id: id, stock: { $gte: quantity } },
+      { $inc: { stock: -quantity } },
       { new: true },
     );
   }
