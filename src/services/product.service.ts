@@ -1,6 +1,6 @@
 import ProductRepository from '../repositories/product.repository.ts';
 import { IProduct } from '../interfaces/product.interface.ts';
-import { isValidObejctId } from '../utils/helper.ts';
+import { isValidObjectId } from '../utils/helper.ts';
 
 class ProductService {
   async getAll(): Promise<IProduct[]> {
@@ -8,7 +8,7 @@ class ProductService {
   }
 
   async getById(id: string): Promise<IProduct | null> {
-    isValidObejctId(id);
+    isValidObjectId(id);
 
     return await ProductRepository.findById(id);
   }
@@ -20,7 +20,7 @@ class ProductService {
   }
 
   async update(id: string, newProduct: IProduct): Promise<IProduct | null> {
-    isValidObejctId(id);
+    isValidObjectId(id);
 
     // --> add logic for validate
 
@@ -28,7 +28,7 @@ class ProductService {
   }
 
   async remove(id: string): Promise<IProduct | null> {
-    isValidObejctId(id);
+    isValidObjectId(id);
 
     return await ProductRepository.delete(id);
   }

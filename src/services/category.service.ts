@@ -1,5 +1,5 @@
 import { ICategory } from '../interfaces/category.interface.ts';
-import { isValidObejctId } from '../utils/helper.ts';
+import { isValidObjectId } from '../utils/helper.ts';
 import CategoryRepository from '../repositories/category.repository.ts';
 
 class CategoryService {
@@ -8,7 +8,7 @@ class CategoryService {
   }
 
   async getById(id: string): Promise<ICategory | null> {
-    isValidObejctId(id);
+    isValidObjectId(id);
 
     return await CategoryRepository.findById(id);
   }
@@ -20,7 +20,7 @@ class CategoryService {
   }
 
   async update(id: string, newCategory: ICategory): Promise<ICategory | null> {
-    isValidObejctId(id);
+    isValidObjectId(id);
     // --> add logic for update validation
 
     return await CategoryRepository.update(id, newCategory);

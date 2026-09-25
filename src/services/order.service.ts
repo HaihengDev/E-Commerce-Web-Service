@@ -1,6 +1,5 @@
 import { isValidObjectId, resourceNotFound } from '../utils/helper.ts';
 import { IOrder } from '../interfaces/order.interface.ts';
-import { appError } from '../exception/appError.ts';
 import OrderRepository from '../repositories/order.repository.ts';
 import ProductRepository from '../repositories/product.repository.ts';
 
