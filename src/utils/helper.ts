@@ -1,6 +1,9 @@
 import mongoose from 'mongoose';
 import bcrypt from 'bcrypt';
+
 import { appError } from '../exception/appError.ts';
+
+import { IUser } from '../interfaces/user.interface.ts';
 
 export const isValidObjectId = (id: string): void => {
   if (!mongoose.Types.ObjectId.isValid(id)) {
@@ -29,4 +32,13 @@ export const dateFormatter = (date: number): string => {
   };
 
   return new Intl.DateTimeFormat('en-US', options).format(date);
+};
+
+export const comparePassword = async (
+  password: string,
+  hashedPassword: string,
+): Promise<boolean> => {
+  const isValid: boolean = await bcrypt.compare(password, hashedPassword);
+
+  return isValid;
 };

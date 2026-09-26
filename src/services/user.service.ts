@@ -2,10 +2,11 @@ import { z } from 'zod';
 
 import { ICustomer } from '../interfaces/customer.interface.ts';
 import { IEmployee } from '../interfaces/employee.interface.ts';
-import { IUser } from '../interfaces/user.interface.ts';
+import { ILogin, IUser } from '../interfaces/user.interface.ts';
 
-import { IRegisterResponse } from '../interfaces/user.interface.ts';
+import { IAuthResponse } from '../interfaces/user.interface.ts';
 import {
+  comparePassword,
   dateFormatter,
   hashPassword,
   resourceNotFound,
@@ -25,7 +26,7 @@ const registerSchema = z.object({
 });
 
 class UserService {
-  async register(user: IUser): Promise<IRegisterResponse> {
+  async register(user: IUser): Promise<IAuthResponse> {
     const result = registerSchema.safeParse(user);
 
     if (!result.success) {
@@ -81,7 +82,7 @@ class UserService {
     const result = registerSchema.safeParse({ email: email });
 
     if (!result.success) {
-      throw new appError(404, result.error.issues[0].message);
+      throw new appError(400, result.error.issues[0].message);
     }
 
     const user = await UserRepository.findUserByEmail(email);
@@ -89,6 +90,48 @@ class UserService {
     resourceNotFound(user, 'User');
 
     return user;
+  }
+
+  async getUserByUsername(username: string): Promise<IUser | null> {
+    const result = registerSchema.safeParse({ username: username });
+
+    if (!result.success) {
+      throw new appError(400, result.error.issues[0].message);
+    }
+
+    const user = await UserRepository.findUserByUsername(username);
+
+    resourceNotFound(user, 'User');
+
+    return user;
+  }
+
+  async login(user: ILogin): Promise<IAuthResponse> {
+    const result = registerSchema.safeParse(user);
+
+    if (!result.success) {
+      throw new appError(400, result.error.issues[0].message);
+    }
+
+    const userData = await this.getUserByEmail(user.email);
+
+    resourceNotFound(userData, 'User');
+
+    const isValidPassword = await comparePassword(
+      user.password,
+      userData!.password,
+    );
+
+    if (!isValidPassword) {
+      throw new appError(409, 'Passwod is invalid.');
+    }
+
+    const token = generateToken(userData!._id!.toString());
+
+    return {
+      user: userData as IUser,
+      token,
+    };
   }
 }
 

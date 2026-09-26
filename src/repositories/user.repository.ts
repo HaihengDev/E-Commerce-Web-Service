@@ -10,11 +10,15 @@ class UserRepository {
     return await User.findOne({ email: email });
   }
 
-  async findAllNormalUser() {
+  async findUserByUsername(username: string): Promise<IUser | null> {
+    return await User.findOne({ username: username });
+  }
+
+  async findAllNormalUser(): Promise<IUser[] | null> {
     return await User.find({ role: UserRole.User });
   }
 
-  async findAllAdmin() {
+  async findAllAdmin(): Promise<IUser[] | null> {
     return await User.find({ role: UserRole.Admin });
   }
 }

@@ -15,7 +15,12 @@ export interface IUser {
   role?: UserRole;
 }
 
-export interface IRegisterResponse {
+export interface IAuthResponse {
   user: IUser;
   token: string;
+}
+
+export interface ILogin {
+  email: string;
+  password: string;
 }
