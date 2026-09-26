@@ -9,6 +9,7 @@ export interface IOrderDetails {
 
 export interface IOrder {
   _id?: mongoose.Types.ObjectId;
-  user_id: string;
+  customer_id: string;
+  employee_id: string;
   orders: IOrderDetails[];
 }

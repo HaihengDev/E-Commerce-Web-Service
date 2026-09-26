@@ -37,43 +37,37 @@ export const readOrderById = async (
 export const createOrder = async (
   req: AuthenticationRequest,
   res: Response,
-): Promise<Response> => {
+) => {
   try {
-    const user_id = req?.userId;
-
-    const order: IOrder = {
-      user_id: String(user_id),
-      orders: req.body,
-    };
-
-    return res.status(201).json({
-      message: 'order is created successfully.',
-      data: await OrderService.add(order),
-    });
+    // const user_id = req?.userId;
+    // const order: IOrder = {
+    //   user_id: String(user_id),
+    //   orders: req.body,
+    // };
+    // return res.status(201).json({
+    //   message: 'order is created successfully.',
+    //   data: await OrderService.add(order),
+    // });
+    // --> need more logic for input with customer_id and employee_id
   } catch (err) {
     return sendError(res, err);
   }
 };
 
-export const updateOrder = async (
-  req: Request,
-  res: Response,
-): Promise<Response> => {
+export const updateOrder = async (req: Request, res: Response) => {
   try {
-    const id = req.params.id as string;
-
-    const order = await OrderService.getById(id);
-
-    const newOrder: IOrder = {
-      ...order,
-      user_id: order?.user_id as string,
-      orders: req.body,
-    };
-
-    return res.status(200).json({
-      message: 'Order updated successfully',
-      data: await OrderService.update(id, newOrder),
-    });
+    // const id = req.params.id as string;
+    // const order = await OrderService.getById(id);
+    // const newOrder: IOrder = {
+    //   ...order,
+    //   user_id: order?.user_id as string,
+    //   orders: req.body,
+    // };
+    // return res.status(200).json({
+    //   message: 'Order updated successfully',
+    //   data: await OrderService.update(id, newOrder),
+    // });
+    // -> make change after finish cutomer endpoint and employee endpoint
   } catch (err) {
     return sendError(res, err);
   }

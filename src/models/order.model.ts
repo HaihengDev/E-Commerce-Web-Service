@@ -28,7 +28,11 @@ const orderSchema = new mongoose.Schema<IOrder>(
     _id: {
       type: mongoose.Types.ObjectId,
     },
-    user_id: {
+    customer_id: {
+      type: String,
+      required: true,
+    },
+    employee_id: {
       type: String,
       required: true,
     },
