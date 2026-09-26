@@ -39,16 +39,21 @@ export const createOrder = async (
   res: Response,
 ) => {
   try {
-    // const user_id = req?.userId;
-    // const order: IOrder = {
-    //   user_id: String(user_id),
-    //   orders: req.body,
-    // };
-    // return res.status(201).json({
-    //   message: 'order is created successfully.',
-    //   data: await OrderService.add(order),
-    // });
-    // --> need more logic for input with customer_id and employee_id
+    const { product_id, product_name, quantity, price } = req.body;
+    const customer_id = req?.userId as string;
+
+    const order: IOrder = {
+      product_id,
+      product_name,
+      quantity,
+      price,
+      customer_id,
+    };
+
+    return res.status(201).json({
+      message: 'Order is created successfully.',
+      data: await OrderService.add(order),
+    });
   } catch (err) {
     return sendError(res, err);
   }

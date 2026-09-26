@@ -1,8 +1,11 @@
 import mongoose from 'mongoose';
-import { IOrder, IOrderDetails } from '../interfaces/order.interface.ts';
+import { IOrder } from '../interfaces/order.interface.ts';
 
-export const orderDetailsSchema = new mongoose.Schema<IOrderDetails>(
+const orderSchema = new mongoose.Schema<IOrder>(
   {
+    _id: {
+      type: mongoose.Types.ObjectId,
+    },
     product_id: {
       type: String,
       required: true,
@@ -19,25 +22,8 @@ export const orderDetailsSchema = new mongoose.Schema<IOrderDetails>(
       type: Number,
       required: true,
     },
-  },
-  { _id: false },
-);
-
-const orderSchema = new mongoose.Schema<IOrder>(
-  {
-    _id: {
-      type: mongoose.Types.ObjectId,
-    },
     customer_id: {
       type: String,
-      required: true,
-    },
-    employee_id: {
-      type: String,
-      required: true,
-    },
-    orders: {
-      type: [orderDetailsSchema],
       required: true,
     },
   },
