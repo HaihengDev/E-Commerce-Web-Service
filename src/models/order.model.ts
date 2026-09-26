@@ -1,7 +1,7 @@
 import mongoose from 'mongoose';
 import { IOrder, IOrderDetails } from '../interfaces/order.interface.ts';
 
-const orderDetailsSchema = new mongoose.Schema<IOrderDetails>(
+export const orderDetailsSchema = new mongoose.Schema<IOrderDetails>(
   {
     product_id: {
       type: String,

@@ -5,6 +5,8 @@ import { hashPassword, resourceNotFound } from '../utils/helper.ts';
 import { appError } from '../exception/appError.ts';
 import { generateToken } from '../auth/jwt.ts';
 import UserRepository from '../repositories/user.repository.ts';
+import CustomerRepository from '../repositories/customer.repository.ts';
+import { ICustomer } from '../interfaces/customer.interface.ts';
 
 const registerSchema = z.object({
   email: z.string().trim().email('Invalid email format.'),
@@ -42,6 +44,16 @@ class UserService {
 
     const token = generateToken(createdUser._id!.toString());
     const { password: _password, ...safeUser } = createdUser;
+
+    if (user.role === 'USER') {
+      const customer: ICustomer = {
+        customer_name: user.username,
+      };
+
+      await CustomerRepository.insert(customer);
+    }
+
+    // --> add for employee
 
     return {
       user: safeUser as IUser,

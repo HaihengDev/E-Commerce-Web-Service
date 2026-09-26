@@ -2,6 +2,7 @@ import mongoose from 'mongoose';
 
 export enum UserRole {
   Admin = 'ADMIN',
+  Employee = 'EMPLOYEE',
   User = 'USER',
 }
 
