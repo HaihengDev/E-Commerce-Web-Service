@@ -18,8 +18,6 @@ class CustomerService {
   }
 
   async create(customer: ICustomer): Promise<ICustomer | null> {
-    // --> add logic for customer input
-
     return await CustomerRepository.insert(customer);
   }
 
