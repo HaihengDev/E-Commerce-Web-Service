@@ -1,12 +1,21 @@
 import { z } from 'zod';
+
+import { ICustomer } from '../interfaces/customer.interface.ts';
+import { IEmployee } from '../interfaces/employee.interface.ts';
 import { IUser } from '../interfaces/user.interface.ts';
+
 import { IRegisterResponse } from '../interfaces/user.interface.ts';
-import { hashPassword, resourceNotFound } from '../utils/helper.ts';
+import {
+  dateFormatter,
+  hashPassword,
+  resourceNotFound,
+} from '../utils/helper.ts';
 import { appError } from '../exception/appError.ts';
 import { generateToken } from '../auth/jwt.ts';
-import UserRepository from '../repositories/user.repository.ts';
+
 import CustomerRepository from '../repositories/customer.repository.ts';
-import { ICustomer } from '../interfaces/customer.interface.ts';
+import EmployeeRepository from '../repositories/employee.repository.ts';
+import UserRepository from '../repositories/user.repository.ts';
 
 const registerSchema = z.object({
   email: z.string().trim().email('Invalid email format.'),
@@ -53,7 +62,14 @@ class UserService {
       await CustomerRepository.insert(customer);
     }
 
-    // --> add for employee
+    if (user.role === 'EMPLOYEE' || user.role === 'ADMIN') {
+      const employee: IEmployee = {
+        employee_name: user.username,
+        employment_date: dateFormatter(Date.now()),
+      };
+
+      await EmployeeRepository.insert(employee);
+    }
 
     return {
       user: safeUser as IUser,

@@ -13,6 +13,7 @@ const employeeSchema = new mongoose.Schema<IEmployee>(
     employee_gender: {
       type: String,
       enum: Object.values(Gender),
+      default: Gender.Male,
     },
     employment_date: {
       type: String,
