@@ -1,7 +1,23 @@
+import { z } from 'zod';
+
 import { isValidObjectId, resourceNotFound } from '../utils/helper.ts';
 import { IOrder } from '../interfaces/order.interface.ts';
+import { appError } from '../exception/appError.ts';
+
 import OrderRepository from '../repositories/order.repository.ts';
-import ProductRepository from '../repositories/product.repository.ts';
+
+const orderSchema = z.object({
+  product_id: z.string({ message: 'Product id must be string' }).trim(),
+  product_name: z.string({ message: 'Product name must be string' }).trim(),
+  quantity: z
+    .number({ message: 'Quantity must be number.' })
+    .min(1, 'Quantity must be atleast 1.'),
+  price: z
+    .number({
+      message: 'Price must be number.',
+    })
+    .min(1, 'Price must be at least 1.'),
+});
 
 class OrderService {
   async getAll(): Promise<IOrder[]> {
@@ -18,14 +34,11 @@ class OrderService {
     return order;
   }
 
-  async add(order: IOrder): Promise<IOrder | null> {
-    for (const item of order.orders) {
-      const product = await ProductRepository.decreaseStock(
-        item.product_id,
-        item.quantity,
-      );
+  async add(order: IOrder) {
+    const result = orderSchema.safeParse(order);
 
-      resourceNotFound(product);
+    if (!result.success) {
+      throw new appError(400, result.error.issues[0].message);
     }
 
     return await OrderRepository.insert(order);
