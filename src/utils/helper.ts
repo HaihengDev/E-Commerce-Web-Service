@@ -20,3 +20,13 @@ export const resourceNotFound = (
 export const hashPassword = async (password: string): Promise<string> => {
   return await bcrypt.hash(password, 10);
 };
+
+export const dateFormatter = (date: number): string => {
+  const options: Intl.DateTimeFormatOptions = {
+    year: 'numeric',
+    month: 'long',
+    day: 'numeric',
+  };
+
+  return new Intl.DateTimeFormat('en-US', options).format(date);
+};
