@@ -1,6 +1,5 @@
 import mongoose from 'mongoose';
 import { ICustomer } from '../interfaces/customer.interface.ts';
-import { orderDetailsSchema } from './order.model.ts';
 
 const customerSchema = new mongoose.Schema<ICustomer>(
   {
@@ -20,7 +19,7 @@ const customerSchema = new mongoose.Schema<ICustomer>(
       default: 0,
     },
     order_history: {
-      type: [orderDetailsSchema],
+      type: Array<string>,
     },
   },
   { timestamps: true, collection: 'customers' },

@@ -6,6 +6,10 @@ const orderSchema = new mongoose.Schema<IOrder>(
     _id: {
       type: mongoose.Types.ObjectId,
     },
+    order_id: {
+      type: String,
+      required: true,
+    },
     product_id: {
       type: String,
       required: true,
