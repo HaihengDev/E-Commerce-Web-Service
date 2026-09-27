@@ -29,14 +29,24 @@ export const createProduct = async (
   res: Response,
 ): Promise<Response> => {
   try {
-    const { product_name, stock, discount, price, category } = req.body;
-
-    const product: IProduct = {
+    const {
+      product_id,
       product_name,
       stock,
       discount,
       price,
       category,
+      supplier,
+    } = req.body;
+
+    const product: IProduct = {
+      product_id,
+      product_name,
+      stock,
+      discount,
+      price,
+      category,
+      supplier,
     };
 
     return res.status(201).json({
@@ -54,16 +64,26 @@ export const updateProduct = async (
 ): Promise<Response> => {
   try {
     const id = req.params.id as string;
-    const { product_name, product_imgUrl, stock, discount, price, category } =
-      req.body;
-
-    const newProduct: IProduct = {
+    const {
+      product_id,
       product_name,
       product_imgUrl,
       stock,
       discount,
       price,
       category,
+      supplier,
+    } = req.body;
+
+    const newProduct: IProduct = {
+      product_id,
+      product_name,
+      product_imgUrl,
+      stock,
+      discount,
+      price,
+      category,
+      supplier,
     };
 
     return res.status(200).json({
