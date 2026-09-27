@@ -29,8 +29,11 @@ export const createCategory = async (
   res: Response,
 ): Promise<Response> => {
   try {
+    const { category_id, category_name } = req.body;
+
     const category: ICategory = {
-      category_name: req.body,
+      category_id,
+      category_name,
     };
 
     return res.status(201).json({
@@ -49,8 +52,11 @@ export const updateCategory = async (
   try {
     const id = req.params.id as string;
 
+    const { category_id, category_name } = req.body;
+
     const newCategory: ICategory = {
-      category_name: req.body,
+      category_id,
+      category_name,
       // category_imgUrl: req.file, --> need to be add multer on route and middleware
     };
 
