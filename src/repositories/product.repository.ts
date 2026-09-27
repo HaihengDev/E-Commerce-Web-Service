@@ -22,6 +22,16 @@ class ProductRepository {
     return await Product.findByIdAndDelete(id);
   }
 
+  async increaseStock(id: string, quantity: number): Promise<IProduct | null> {
+    return await Product.findOneAndUpdate(
+      {
+        _id: id,
+      },
+      { $inc: { stock: +quantity } },
+      { new: true },
+    );
+  }
+
   async decreaseStock(id: string, quantity: number): Promise<IProduct | null> {
     return await Product.findOneAndUpdate(
       { _id: id, stock: { $gte: quantity } },

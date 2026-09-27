@@ -6,6 +6,10 @@ const productSchema = new mongoose.Schema<IProduct>(
     _id: {
       type: mongoose.Types.ObjectId,
     },
+    product_id: {
+      type: String,
+      required: true,
+    },
     product_name: {
       type: String,
       required: true,
@@ -26,7 +30,11 @@ const productSchema = new mongoose.Schema<IProduct>(
       required: true,
     },
     category: {
-      type: mongoose.Types.ObjectId,
+      type: String,
+      required: true,
+    },
+    supplier: {
+      type: String,
       required: true,
     },
   },
