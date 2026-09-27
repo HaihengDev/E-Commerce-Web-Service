@@ -4,6 +4,7 @@ import productRoute from './routes/product.route.ts';
 import categoryRoute from './routes/category.route.ts';
 import orderRoute from './routes/order.rotue.ts';
 import customerRoute from './routes/customer.route.ts';
+import supplierRoute from './routes/supplier.route.ts';
 import dotenv from 'dotenv';
 import { connectDB } from './config/db.ts';
 dotenv.config();
@@ -15,6 +16,7 @@ app.use('/api/v1/products', productRoute);
 app.use('/api/v1/categories', categoryRoute);
 app.use('/api/v1/orders', orderRoute);
 app.use('/api/v1/customers', customerRoute);
+app.use('/api/v1/suppliers', supplierRoute);
 
 const PORT = process.env.PORT;
 
