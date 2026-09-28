@@ -1,5 +1,6 @@
 import mongoose from 'mongoose';
 import { ISupplier } from '../interfaces/supplier.interface.ts';
+import { counterId } from '../utils/helper.ts';
 
 const supplierSchema = new mongoose.Schema<ISupplier>({
   _id: {
@@ -22,6 +23,10 @@ const supplierSchema = new mongoose.Schema<ISupplier>({
     type: String,
     required: true,
   },
+});
+
+supplierSchema.pre('save', async function () {
+  this.supplier_id = await counterId('Supplier', 'sup');
 });
 
 export default mongoose.model<ISupplier>('Supplier', supplierSchema);

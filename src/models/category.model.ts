@@ -1,5 +1,6 @@
 import mongoose from 'mongoose';
 import { ICategory } from '../interfaces/category.interface.ts';
+import { counterId } from '../utils/helper.ts';
 
 const categorySchema = new mongoose.Schema<ICategory>(
   {
@@ -24,5 +25,9 @@ const categorySchema = new mongoose.Schema<ICategory>(
   },
   { timestamps: true, collection: 'categories' },
 );
+
+categorySchema.pre('save', async function () {
+  this.category_id = await counterId('category', 'cat');
+});
 
 export default mongoose.model<ICategory>('Category', categorySchema);

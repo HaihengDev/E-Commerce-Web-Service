@@ -1,5 +1,6 @@
 import mongoose from 'mongoose';
 import { UserRole, IUser } from '../interfaces/user.interface.ts';
+import { counterId } from '../utils/helper.ts';
 
 const userSchema = new mongoose.Schema<IUser>(
   {
@@ -31,5 +32,9 @@ const userSchema = new mongoose.Schema<IUser>(
   },
   { timestamps: true, collection: 'users' },
 );
+
+userSchema.pre('save', async function () {
+  this.user_id = await counterId('user', 'usr');
+});
 
 export default mongoose.model<IUser>('User', userSchema);

@@ -1,5 +1,6 @@
 import mongoose from 'mongoose';
 import { Gender, IEmployee } from '../interfaces/employee.interface.ts';
+import { counterId } from '../utils/helper.ts';
 
 const employeeSchema = new mongoose.Schema<IEmployee>(
   {
@@ -34,5 +35,9 @@ const employeeSchema = new mongoose.Schema<IEmployee>(
   },
   { timestamps: true, collection: 'employees' },
 );
+
+employeeSchema.pre('save', async function () {
+  this.employee_id = await counterId('employee', 'emp');
+});
 
 export default mongoose.model<IEmployee>('Employee', employeeSchema);

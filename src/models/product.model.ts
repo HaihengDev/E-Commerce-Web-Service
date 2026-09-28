@@ -1,5 +1,6 @@
 import mongoose from 'mongoose';
 import { IProduct } from '../interfaces/product.interface.ts';
+import { counterId } from '../utils/helper.ts';
 
 const productSchema = new mongoose.Schema<IProduct>(
   {
@@ -40,5 +41,9 @@ const productSchema = new mongoose.Schema<IProduct>(
   },
   { timestamps: true, collection: 'products' },
 );
+
+productSchema.pre('save', async function () {
+  this.product_id = await counterId('product', 'prd');
+});
 
 export default mongoose.model<IProduct>('Product', productSchema);
