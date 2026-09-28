@@ -6,6 +6,10 @@ const customerSchema = new mongoose.Schema<ICustomer>(
     _id: {
       type: mongoose.Types.ObjectId,
     },
+    customer_id: {
+      type: String,
+      required: true,
+    },
     customer_name: {
       type: String,
       required: true,

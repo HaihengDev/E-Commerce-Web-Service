@@ -7,7 +7,7 @@ class CustomerService {
     return await CustomerRepository.findAll();
   }
 
-  async getById(id: string) {
+  async getById(id: string): Promise<ICustomer | null> {
     isValidObjectId(id);
 
     const customer = await CustomerRepository.findById(id);

@@ -7,6 +7,7 @@ export enum Gender {
 
 export interface IEmployee {
   _id?: mongoose.Types.ObjectId;
+  employee_id?: string;
   employee_name: string;
   employee_gender?: Gender;
   employment_date?: string;

@@ -6,6 +6,10 @@ const userSchema = new mongoose.Schema<IUser>(
     _id: {
       type: mongoose.Types.ObjectId,
     },
+    user_id: {
+      type: String,
+      required: true,
+    },
     email: {
       type: String,
       required: true,

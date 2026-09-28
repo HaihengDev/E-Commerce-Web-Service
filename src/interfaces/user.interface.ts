@@ -8,6 +8,7 @@ export enum UserRole {
 
 export interface IUser {
   _id?: mongoose.Types.ObjectId;
+  user_id?: string;
   email: string;
   telephone: string;
   username: string;

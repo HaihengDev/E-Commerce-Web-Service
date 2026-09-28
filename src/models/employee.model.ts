@@ -6,6 +6,10 @@ const employeeSchema = new mongoose.Schema<IEmployee>(
     _id: {
       type: mongoose.Types.ObjectId,
     },
+    employee_id: {
+      type: String,
+      required: true,
+    },
     employee_name: {
       type: String,
       required: true,

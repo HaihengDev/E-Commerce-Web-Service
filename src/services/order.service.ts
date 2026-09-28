@@ -34,7 +34,7 @@ class OrderService {
     return order;
   }
 
-  async add(order: IOrder) {
+  async add(order: IOrder): Promise<IOrder | null> {
     const result = orderSchema.safeParse(order);
 
     if (!result.success) {

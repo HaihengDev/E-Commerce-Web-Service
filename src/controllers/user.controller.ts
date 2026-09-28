@@ -28,7 +28,7 @@ export const register = async (
   }
 };
 
-export const login = async (req: Request, res: Response) => {
+export const login = async (req: Request, res: Response): Promise<Response> => {
   try {
     const { email, password } = req.body;
 

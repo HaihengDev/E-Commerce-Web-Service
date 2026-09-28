@@ -69,7 +69,10 @@ export const updateCategory = async (
   }
 };
 
-export const deleteCategory = async (req: Request, res: Response) => {
+export const deleteCategory = async (
+  req: Request,
+  res: Response,
+): Promise<Response> => {
   try {
     const id = req.params.id as string;
 

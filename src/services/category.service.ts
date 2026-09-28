@@ -54,7 +54,7 @@ class CategoryService {
     return await CategoryRepository.update(id, newDataCategory);
   }
 
-  async remove(id: string) {
+  async remove(id: string): Promise<ICategory | null> {
     isValidObjectId(id);
 
     const category = await this.getById(id);
