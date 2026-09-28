@@ -1,7 +1,5 @@
 import { z } from 'zod';
 
-import { ICustomer } from '../interfaces/customer.interface.ts';
-import { IEmployee } from '../interfaces/employee.interface.ts';
 import { ILogin, IUser } from '../interfaces/user.interface.ts';
 
 import { IAuthResponse } from '../interfaces/user.interface.ts';
@@ -14,8 +12,6 @@ import {
 import { appError } from '../exception/appError.ts';
 import { generateToken } from '../auth/jwt.ts';
 
-import CustomerRepository from '../repositories/customer.repository.ts';
-import EmployeeRepository from '../repositories/employee.repository.ts';
 import UserRepository from '../repositories/user.repository.ts';
 
 const registerSchema = z.object({
@@ -54,23 +50,6 @@ class UserService {
 
     const token = generateToken(createdUser._id!.toString());
     const { password: _password, ...safeUser } = createdUser;
-
-    if (user.role === 'USER') {
-      const customer: ICustomer = {
-        customer_name: user.username,
-      };
-
-      await CustomerRepository.insert(customer);
-    }
-
-    if (user.role === 'EMPLOYEE' || user.role === 'ADMIN') {
-      const employee: IEmployee = {
-        employee_name: user.username,
-        employment_date: dateFormatter(Date.now()),
-      };
-
-      await EmployeeRepository.insert(employee);
-    }
 
     return {
       user: safeUser as IUser,
