@@ -34,10 +34,6 @@ const productSchema = new mongoose.Schema<IProduct>(
       type: String,
       required: true,
     },
-    supplier: {
-      type: String,
-      required: true,
-    },
   },
   { timestamps: true, collection: 'products' },
 );

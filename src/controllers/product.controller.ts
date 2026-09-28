@@ -46,7 +46,6 @@ export const createProduct = async (
       discount,
       price,
       category,
-      supplier,
     };
 
     return res.status(201).json({
@@ -83,7 +82,6 @@ export const updateProduct = async (
       discount,
       price,
       category,
-      supplier,
     };
 
     return res.status(200).json({

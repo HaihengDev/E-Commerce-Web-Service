@@ -23,7 +23,6 @@ const productSchema = z.object({
   discount: z.number({ message: 'Product discount must be numeric' }),
   price: z.number({ message: 'Product price must be number.' }),
   category: z.string({ message: 'Product category must be string' }).trim(),
-  supplier: z.string({ message: 'Product supplier must be string.' }).trim(),
 });
 
 class ProductService {

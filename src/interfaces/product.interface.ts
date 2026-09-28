@@ -9,5 +9,4 @@ export interface IProduct {
   discount?: number;
   price: number;
   category: string;
-  supplier: string;
 }
