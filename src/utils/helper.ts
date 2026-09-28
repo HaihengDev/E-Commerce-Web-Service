@@ -3,7 +3,7 @@ import bcrypt from 'bcrypt';
 
 import { appError } from '../exception/appError.ts';
 
-import { IUser } from '../interfaces/user.interface.ts';
+import Counter from '../models/counter.model.ts';
 
 export const isValidObjectId = (id: string): void => {
   if (!mongoose.Types.ObjectId.isValid(id)) {
@@ -41,4 +41,21 @@ export const comparePassword = async (
   const isValid: boolean = await bcrypt.compare(password, hashedPassword);
 
   return isValid;
+};
+
+export const counterId = async (
+  name: string,
+  prefix: string,
+): Promise<string> => {
+  const counter = await Counter.findOneAndUpdate(
+    { name },
+    { $inc: { sequence: 1 } },
+    { new: true, upsert: true },
+  );
+
+  if (!counter) {
+    throw new Error('Failed to generate ID.');
+  }
+
+  return `${prefix}${counter.sequence.toString().padStart(4, '0')}`;
 };

@@ -1,5 +1,6 @@
 import mongoose from 'mongoose';
 import { ICustomer } from '../interfaces/customer.interface.ts';
+import { counterId } from '../utils/helper.ts';
 
 const customerSchema = new mongoose.Schema<ICustomer>(
   {
@@ -28,5 +29,9 @@ const customerSchema = new mongoose.Schema<ICustomer>(
   },
   { timestamps: true, collection: 'customers' },
 );
+
+customerSchema.pre('save', async function () {
+  this.customer_id = await counterId('customer', 'cus');
+});
 
 export default mongoose.model<ICustomer>('Customer', customerSchema);

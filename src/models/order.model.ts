@@ -1,5 +1,6 @@
 import mongoose from 'mongoose';
 import { IOrder } from '../interfaces/order.interface.ts';
+import { counterId } from '../utils/helper.ts';
 
 const orderSchema = new mongoose.Schema<IOrder>(
   {
@@ -33,5 +34,9 @@ const orderSchema = new mongoose.Schema<IOrder>(
   },
   { timestamps: true, collection: 'orders' },
 );
+
+orderSchema.pre('save', async function () {
+  this.order_id = await counterId('order', 'ord');
+});
 
 export default mongoose.model<IOrder>('Order', orderSchema);
