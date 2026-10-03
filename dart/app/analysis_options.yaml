@@ -4,4 +4,5 @@ analyzer:
     avoid_print: ignore
     non_constant_identifier_names: ignore
     sort_constructors_first: ignore
+    unnecessary_lambdas: ignore
 include: package:dart_frog_lint/recommended.yaml

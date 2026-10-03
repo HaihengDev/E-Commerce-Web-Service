@@ -4,7 +4,7 @@ import 'package:mongo_dart/mongo_dart.dart';
 class Database {
   static Db? _db;
 
-  static Future<Db> get connect async {
+  static Future<Db> connect() async {
     if (_db != null && _db!.isConnected) {
       return _db!;
     }

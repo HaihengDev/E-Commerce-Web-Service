@@ -1,4 +1,4 @@
-class CreateProductDto {
+class UpdateProductDto {
   final String product_id;
   final String product_name;
   final String? product_imgUrl;
@@ -6,17 +6,17 @@ class CreateProductDto {
   final int? discount;
   final double price;
 
-  CreateProductDto({
+  UpdateProductDto({
     required this.product_id,
     required this.product_name,
     this.product_imgUrl,
-    this.stock = 0,
-    this.discount = 0,
+    this.stock,
+    this.discount,
     required this.price,
   });
 
-  factory CreateProductDto.fromJson(Map<String, dynamic> json) {
-    return CreateProductDto(
+  factory UpdateProductDto.fromJson(Map<String, dynamic> json) {
+    return UpdateProductDto(
       product_id: json['product_id'] as String,
       product_name: json['product_name'] as String,
       product_imgUrl: json['product_imgUrl'] as String,

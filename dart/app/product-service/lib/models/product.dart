@@ -14,4 +14,15 @@ class Product {
     this.discount = 0,
     required this.price,
   });
+
+  Map<String, dynamic> toJson() {
+    return {
+      'product_id': product_id,
+      'product_name': product_name,
+      'product_imgUrl': product_imgUrl,
+      'stock': stock,
+      'discount': discount,
+      'price': price,
+    };
+  }
 }
