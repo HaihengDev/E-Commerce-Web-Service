@@ -1,6 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { CreateProductDto } from './dto/create-product.dto.js';
 import { UpdateProductDto } from './dto/update-product.dto.js';
+import { products } from '../data/data.js';
 
 @Injectable()
 export class ProductsService {
@@ -9,7 +10,7 @@ export class ProductsService {
   }
 
   findAll() {
-    return `This action returns all products`;
+    return products;
   }
 
   findOne(id: number) {
