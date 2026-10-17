@@ -1,7 +1,9 @@
 analyzer:
   errors:
     always_put_required_named_parameters_first: ignore
+    always_use_package_imports: ignore
     avoid_print: ignore
     non_constant_identifier_names: ignore
+    public_member_api_docs: ignore
     sort_constructors_first: ignore
 include: package:dart_frog_lint/recommended.yaml
