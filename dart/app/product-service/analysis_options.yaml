@@ -6,4 +6,6 @@ analyzer:
     non_constant_identifier_names: ignore
     public_member_api_docs: ignore
     sort_constructors_first: ignore
+    unnecessary_await_in_return: ignore
+    unnecessary_null_comparison: ignore
 include: package:dart_frog_lint/recommended.yaml

@@ -50,5 +50,43 @@ class ProductService {
     return repository.delete(product_id);
   }
 
-  // add patch service
+  Future<Product?> patch(String product_id, Product newProduct) async {
+    dataValidation(newProduct);
+
+    final updates = <String, dynamic>{};
+
+    if (newProduct.product_name != null) {
+      updates['product_name'] = newProduct.product_name.trim();
+    }
+
+    if (newProduct.imgUrl != null) {
+      updates['imgUrl'] = newProduct.imgUrl;
+    }
+
+    if (newProduct.stock != null) {
+      updates['stock'] = newProduct.stock;
+    }
+
+    if (newProduct.discount != null) {
+      updates['discount'] = newProduct.discount;
+    }
+
+    if (newProduct.price != null) {
+      updates['price'] = newProduct.price;
+    }
+
+    if (newProduct.description != null) {
+      updates['description'] = newProduct.description.trim();
+    }
+
+    if (newProduct.category != null) {
+      updates['category'] = newProduct.category;
+    }
+
+    if (updates.isEmpty) {
+      throw ArgumentError('No field provided to updates.');
+    }
+
+    return await repository.patch(product_id, updates);
+  }
 }
