@@ -4,11 +4,13 @@ import 'package:app/config/db.dart';
 import 'package:app/repositories/product_repository.dart';
 import 'package:app/utils/IdGenerator.dart';
 import 'package:app/utils/data_validation.dart';
+import 'package:app/services/category_client.dart';
 
 class ProductService {
   final ProductRepository repository;
   final Db database;
   late final IdGenerator _idGenerator;
+  final CategoryClient _categoryClient = CategoryClient();
 
   ProductService(this.repository, this.database) {
     _idGenerator = IdGenerator(database);
@@ -26,6 +28,7 @@ class ProductService {
     final product_id = await _idGenerator.nextId('PRD');
 
     dataValidation(product);
+    await _categoryClient.requireCategory(product.category);
 
     final data = Product(
       product_id: product_id,
@@ -43,6 +46,7 @@ class ProductService {
 
   Future<Product?> update(String product_id, Product newProduct) async {
     dataValidation(newProduct);
+    await _categoryClient.requireCategory(newProduct.category);
 
     return repository.update(product_id, newProduct);
   }
@@ -81,6 +85,7 @@ class ProductService {
     }
 
     if (newProduct.category != null) {
+      await _categoryClient.requireCategory(newProduct.category);
       updates['category'] = newProduct.category;
     }
 
