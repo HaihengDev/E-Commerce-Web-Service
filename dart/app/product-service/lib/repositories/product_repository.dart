@@ -1,5 +1,5 @@
 import 'package:mongo_dart/mongo_dart.dart';
-import '../models/product_model.dart';
+import 'package:app/models/product_model.dart';
 
 class ProductRepository {
   final Db db;
@@ -42,7 +42,7 @@ class ProductRepository {
     final result = await _collection.updateOne(
       where.eq('product_id', id),
       modify
-          .set('name', newProduct.product_name)
+          .set('product_name', newProduct.product_name)
           .set('imgUrl', newProduct.imgUrl)
           .set('stock', newProduct.stock)
           .set('discount', newProduct.discount)

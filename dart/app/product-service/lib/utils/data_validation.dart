@@ -1,4 +1,4 @@
-import '../models/product_model.dart';
+import 'package:app/models/product_model.dart';
 
 void dataValidation(Product product) {
   if (product.product_name.trim().isEmpty) {

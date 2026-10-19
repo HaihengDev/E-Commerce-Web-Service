@@ -1,5 +1,5 @@
 import 'package:mongo_dart/mongo_dart.dart';
-import './generate_id.dart';
+import 'package:app/utils/generate_id.dart';
 
 class IdGenerator {
   final Db database;

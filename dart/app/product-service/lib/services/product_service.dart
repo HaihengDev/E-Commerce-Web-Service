@@ -1,8 +1,9 @@
 import 'package:mongo_dart/mongo_dart.dart';
-import '../models/product_model.dart';
-import '../repositories//product_repository.dart';
-import '../utils/IdGenerator.dart';
-import '../utils/data_validation.dart';
+import 'package:app/models/product_model.dart';
+import 'package:app/config/db.dart';
+import 'package:app/repositories/product_repository.dart';
+import 'package:app/utils/IdGenerator.dart';
+import 'package:app/utils/data_validation.dart';
 
 class ProductService {
   final ProductRepository repository;

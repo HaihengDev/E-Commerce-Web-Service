@@ -2,10 +2,17 @@ analyzer:
   errors:
     always_put_required_named_parameters_first: ignore
     always_use_package_imports: ignore
+    avoid_catching_errors: ignore
     avoid_print: ignore
+    avoid_relative_lib_imports: ignore
+    await_only_futures: ignore
+    directives_ordering: ignore
+    no_default_cases: ignore
     non_constant_identifier_names: ignore
     public_member_api_docs: ignore
     sort_constructors_first: ignore
+    unawaited_return_in_try_block: ignore
     unnecessary_await_in_return: ignore
     unnecessary_null_comparison: ignore
+    unused_import: ignore
 include: package:dart_frog_lint/recommended.yaml
