@@ -95,6 +95,7 @@ Future<Response> _patch(
       'price',
       'description',
       'category',
+      'merchant_name',
     };
     if (json.keys.any((key) => !allowedFields.contains(key))) {
       return _badRequest('Request contains an unsupported product field.');
@@ -109,6 +110,7 @@ Future<Response> _patch(
       price: (json['price'] as num?)?.toDouble() ?? current.price,
       description: json['description'] as String? ?? current.description,
       category: json['category'] as String? ?? current.category,
+      merchant_name: json['merchant_name'] as String? ?? current.merchant_name,
     );
 
     final updated = await service.patch(id, product);
@@ -143,6 +145,7 @@ Product _productFromJson(Map<String, dynamic> json, String id) {
     price: (json['price'] as num).toDouble(),
     description: json['description'] as String,
     category: json['category'] as String,
+    merchant_name: json['merchant_name'] as String,
   );
 }
 
