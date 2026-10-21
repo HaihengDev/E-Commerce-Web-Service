@@ -1,7 +1,15 @@
 Product service
 
-Product records include `merchant_name`, which identifies the merchant shown
-with a product. Include it when creating a product and in full (`PUT`) updates.
-For example, `{"merchant_name":"Acme Store"}` is the owner label returned by
-`GET /` and `GET /:id`. Existing records without this field remain readable;
-set the name with `PATCH /:id` to populate them.
+Product records include `merchant_name`, which is filled from the authenticated
+merchant account name, and `merchant_id`, which identifies the owner. Existing
+records without an owner remain readable but cannot be updated or deleted by a
+merchant through the protected API.
+
+Product creation, update, deletion, and patch requests require a merchant JWT.
+Configure `JWT_SECRET` to the same value used by auth-service.
+
+Redis caches product list and item reads for 60 seconds by default. Start the
+shared Redis instance from the repository root with `docker compose up -d redis`.
+Set `REDIS_URL` (default `redis://localhost:6379`) and optionally
+`REDIS_CACHE_TTL_SECONDS` to change the cache TTL. Redis is best-effort: MongoDB
+remains the source of truth and requests continue if Redis is unavailable.

@@ -4,6 +4,7 @@ import 'package:app/config/db.dart';
 import 'package:app/models/product_model.dart';
 import 'package:app/repositories/product_repository.dart';
 import 'package:app/services/product_service.dart';
+import 'package:app/security/token_claims.dart';
 
 Future<ProductService> _service() async {
   final db = await Database.connection;
@@ -21,7 +22,12 @@ Future<Response> onRequest(RequestContext context) async {
     case HttpMethod.get:
       return _readAllProducts(context, service);
     case HttpMethod.post:
-      return _createProduct(context, service, request);
+      final claims = TokenClaims.fromAuthorization(
+        request.headers['authorization'],
+      );
+      if (claims == null) return _unauthorized();
+      if (claims.role != 'merchant') return _forbidden();
+      return _createProduct(context, service, request, claims);
     default:
       return Response.json(
         statusCode: 405,
@@ -56,6 +62,7 @@ Future<Response> _createProduct(
   RequestContext context,
   ProductService service,
   Request request,
+  TokenClaims claims,
 ) async {
   try {
     // 1. Read the request body
@@ -81,7 +88,6 @@ Future<Response> _createProduct(
     final price = json['price'];
     final description = json['description'];
     final category = json['category'];
-    final merchantName = json['merchant_name'];
 
     if (productName is! String ||
         imgUrl is! String ||
@@ -90,7 +96,7 @@ Future<Response> _createProduct(
         (price is! num) ||
         description is! String ||
         category is! String ||
-        merchantName is! String) {
+        (json['merchant_name'] != null && json['merchant_name'] is! String)) {
       return Response.json(
         statusCode: 400,
         body: {
@@ -108,7 +114,8 @@ Future<Response> _createProduct(
       'price': price.toDouble(),
       'description': description,
       'category': category,
-      'merchant_name': merchantName,
+      'merchant_name': claims.name,
+      'merchant_id': claims.subject,
     });
 
     // 5. Call service layer
@@ -142,3 +149,13 @@ Future<Response> _createProduct(
     );
   }
 }
+
+Response _unauthorized() => Response.json(
+  statusCode: 401,
+  body: {'message': 'A valid bearer token is required.'},
+);
+
+Response _forbidden() => Response.json(
+  statusCode: 403,
+  body: {'message': 'Only merchants can manage products.'},
+);

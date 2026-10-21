@@ -1,5 +1,6 @@
 import 'package:mongo_dart/mongo_dart.dart';
 import 'package:app/models/product_model.dart';
+import 'package:app/config/cache.dart';
 
 class ProductRepository {
   final Db db;
@@ -8,17 +9,34 @@ class ProductRepository {
   DbCollection get _collection => db.collection('products');
 
   Future<List<Product>> findAll() async {
+    final cached = await Cache.get<List<Product>>(
+      'products:list',
+      (value) => (value as List)
+          .map(
+            (item) => Product.fromJson(Map<String, dynamic>.from(item as Map)),
+          )
+          .toList(),
+    );
+    if (cached != null) return cached;
     final documents = await _collection.find().toList();
-
-    return documents.map(Product.fromJson).toList();
+    final products = documents.map(Product.fromJson).toList();
+    await Cache.set('products:list', products.map((p) => p.toJson()).toList());
+    return products;
   }
 
   Future<Product?> findById(String id) async {
+    final cached = await Cache.get<Product>(
+      'products:id:$id',
+      (value) => Product.fromJson(Map<String, dynamic>.from(value as Map)),
+    );
+    if (cached != null) return cached;
     final document = await _collection.findOne(where.eq('product_id', id));
 
     if (document == null) return null;
 
-    return Product.fromJson(document);
+    final product = Product.fromJson(document);
+    await Cache.set('products:id:$id', product.toJson());
+    return product;
   }
 
   Future<Product> create(Product product) async {
@@ -32,9 +50,11 @@ class ProductRepository {
       'description': product.description,
       'category': product.category,
       'merchant_name': product.merchant_name,
+      'merchant_id': product.merchant_id,
     };
 
     await _collection.insertOne(document);
+    await _invalidate(product.product_id);
 
     return Product.fromJson(document);
   }
@@ -56,13 +76,13 @@ class ProductRepository {
     if (result.nMatched == 0) {
       return null;
     }
-
+    await _invalidate(id);
     return findById(id);
   }
 
   Future<bool> delete(String id) async {
     final result = await _collection.deleteOne(where.eq('product_id', id));
-
+    if (result.nRemoved > 0) await _invalidate(id);
     return result.nRemoved > 0;
   }
 
@@ -117,7 +137,14 @@ class ProductRepository {
     if (result.nMatched == 0) {
       return null;
     }
-
+    await _invalidate(id);
     return findById(id);
+  }
+
+  Future<void> _invalidate(String id) async {
+    await Future.wait([
+      Cache.delete('products:list'),
+      Cache.delete('products:id:$id'),
+    ]);
   }
 }
