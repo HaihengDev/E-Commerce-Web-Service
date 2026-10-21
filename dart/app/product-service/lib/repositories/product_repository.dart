@@ -31,6 +31,7 @@ class ProductRepository {
       'price': product.price,
       'description': product.description,
       'category': product.category,
+      'merchant_name': product.merchant_name,
     };
 
     await _collection.insertOne(document);
@@ -48,7 +49,8 @@ class ProductRepository {
           .set('discount', newProduct.discount)
           .set('price', newProduct.price)
           .set('description', newProduct.description)
-          .set('category', newProduct.category),
+          .set('category', newProduct.category)
+          .set('merchant_name', newProduct.merchant_name),
     );
 
     if (result.nMatched == 0) {
@@ -97,6 +99,10 @@ class ProductRepository {
 
     if (updates.containsKey('category')) {
       modifier.set('category', updates['category']);
+    }
+
+    if (updates.containsKey('merchant_name')) {
+      modifier.set('merchant_name', updates['merchant_name']);
     }
 
     if (updates.isEmpty) {

@@ -28,6 +28,7 @@ class ProductService {
     final product_id = await _idGenerator.nextId('PRD');
 
     dataValidation(product);
+    _requireMerchantName(product.merchant_name);
     await _categoryClient.requireCategory(product.category);
 
     final data = Product(
@@ -39,6 +40,7 @@ class ProductService {
       price: product.price,
       description: product.description,
       category: product.category,
+      merchant_name: product.merchant_name!.trim(),
     );
 
     return repository.create(data);
@@ -46,6 +48,7 @@ class ProductService {
 
   Future<Product?> update(String product_id, Product newProduct) async {
     dataValidation(newProduct);
+    _requireMerchantName(newProduct.merchant_name);
     await _categoryClient.requireCategory(newProduct.category);
 
     return repository.update(product_id, newProduct);
@@ -89,10 +92,22 @@ class ProductService {
       updates['category'] = newProduct.category;
     }
 
+    if (newProduct.merchant_name != null) {
+      updates['merchant_name'] = _requireMerchantName(newProduct.merchant_name);
+    }
+
     if (updates.isEmpty) {
       throw ArgumentError('No field provided to updates.');
     }
 
     return await repository.patch(product_id, updates);
+  }
+
+  String _requireMerchantName(String? name) {
+    final normalized = name?.trim();
+    if (normalized == null || normalized.isEmpty) {
+      throw ArgumentError('Merchant name is required.');
+    }
+    return normalized;
   }
 }

@@ -81,6 +81,7 @@ Future<Response> _createProduct(
     final price = json['price'];
     final description = json['description'];
     final category = json['category'];
+    final merchantName = json['merchant_name'];
 
     if (productName is! String ||
         imgUrl is! String ||
@@ -88,7 +89,8 @@ Future<Response> _createProduct(
         discount is! int ||
         (price is! num) ||
         description is! String ||
-        category is! String) {
+        category is! String ||
+        merchantName is! String) {
       return Response.json(
         statusCode: 400,
         body: {
@@ -106,6 +108,7 @@ Future<Response> _createProduct(
       'price': price.toDouble(),
       'description': description,
       'category': category,
+      'merchant_name': merchantName,
     });
 
     // 5. Call service layer

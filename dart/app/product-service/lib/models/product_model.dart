@@ -7,6 +7,7 @@ class Product {
   final double price;
   final String description;
   final String category;
+  final String? merchant_name;
 
   const Product({
     required this.product_id,
@@ -17,6 +18,7 @@ class Product {
     required this.price,
     required this.description,
     required this.category,
+    this.merchant_name,
   });
 
   Map<String, dynamic> toJson() {
@@ -29,6 +31,7 @@ class Product {
       'price': price,
       'description': description,
       'category': category,
+      'merchant_name': merchant_name,
     };
   }
 
@@ -42,6 +45,7 @@ class Product {
       price: json['price'] as double,
       description: json['description'] as String,
       category: json['category'] as String,
+      merchant_name: json['merchant_name'] as String?,
     );
   }
 }
