@@ -10,13 +10,44 @@ class MerchantService {
     String method, {
     String? id,
     Map<String, dynamic>? body,
-  }) => _client.send('PRODUCT_SERVICE_URL', method, id: id, body: body);
+    String? authorization,
+  }) => _client.send(
+    'PRODUCT_SERVICE_URL',
+    method,
+    id: id,
+    body: body,
+    authorization: authorization,
+  );
 
   Future<ServiceResponse> categories(
     String method, {
     String? id,
     Map<String, dynamic>? body,
-  }) => _client.send('CATEGORY_SERVICE_URL', method, id: id, body: body);
+    String? authorization,
+  }) => _client.send(
+    'CATEGORY_SERVICE_URL',
+    method,
+    id: id,
+    body: body,
+    authorization: authorization,
+  );
+
+  Future<ServiceResponse> auth(
+    String method,
+    String path,
+    Map<String, dynamic>? body,
+  ) => _client.send('AUTH_SERVICE_URL', method, id: path, body: body);
+
+  Future<ServiceResponse> orders(
+    String method, {
+    Map<String, dynamic>? body,
+    String? authorization,
+  }) => _client.send(
+    'ORDER_SERVICE_URL',
+    method,
+    body: body,
+    authorization: authorization,
+  );
 
   Future<ServiceResponse> deleteCategory(String id) async {
     final productResponse = await products('GET');
