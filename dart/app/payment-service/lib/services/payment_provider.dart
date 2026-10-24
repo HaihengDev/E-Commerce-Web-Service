@@ -11,6 +11,24 @@ class PaymentProvider {
   dotenv.DotEnv _env() =>
       dotenv.DotEnv(includePlatformEnvironment: true)..load();
 
+  bool get demoModeEnabled => _env()['PAYMENT_DEMO_MODE'] == 'true';
+
+  Map<String, dynamic> createDemoPayment(
+    Map<String, dynamic> checkout,
+    String paymentId,
+  ) => {
+    'provider': 'demo',
+    'payment_id': paymentId,
+    'amount_cents': checkout['total_cents'],
+    'currency': 'usd',
+    'status': 'pending',
+    'next_step': {
+      'method': 'POST',
+      'path': '/api/payments/demo/complete',
+      'body': {'payment_id': paymentId},
+    },
+  };
+
   Future<Map<String, dynamic>> createStripeSession(
     Map<String, dynamic> checkout,
     String orderId,

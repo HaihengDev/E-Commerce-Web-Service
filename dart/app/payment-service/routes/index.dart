@@ -36,10 +36,11 @@ Future<Response> onRequest(RequestContext context) async {
     if (orderId.isEmpty) return _badRequest('order_id is required.');
     final returnUrl = body['return_url'] as String?;
     final cancelUrl = body['cancel_url'] as String?;
-    if (returnUrl == null ||
-        cancelUrl == null ||
-        Uri.tryParse(returnUrl)?.hasScheme != true ||
-        Uri.tryParse(cancelUrl)?.hasScheme != true)
+    if (body['provider'] != 'demo' &&
+        (returnUrl == null ||
+            cancelUrl == null ||
+            Uri.tryParse(returnUrl)?.hasScheme != true ||
+            Uri.tryParse(cancelUrl)?.hasScheme != true))
       return _badRequest('return_url and cancel_url must be absolute URLs.');
     final db = await Database.connection;
     final client = http.Client();
@@ -49,30 +50,41 @@ Future<Response> onRequest(RequestContext context) async {
         client,
       ).getOrderTotal(orderId, claims.subject);
       final provider = PaymentProvider(client);
+      final paymentId = provider.newPaymentId();
+      if (body['provider'] == 'demo' && !provider.demoModeEnabled) {
+        throw CheckoutException(403, 'Local demo payments are disabled.');
+      }
       final result = switch (body['provider']) {
         'stripe' => await provider.createStripeSession(
           checkout,
           orderId,
-          returnUrl,
-          cancelUrl,
+          returnUrl!,
+          cancelUrl!,
         ),
         'paypal' => await provider.createPayPalOrder(
           checkout,
           orderId,
-          returnUrl,
-          cancelUrl,
+          returnUrl!,
+          cancelUrl!,
         ),
-        _ => throw CheckoutException(400, 'provider must be stripe or paypal.'),
+        'demo' => provider.createDemoPayment(checkout, paymentId),
+        _ => throw CheckoutException(
+          400,
+          'provider must be stripe, paypal, or demo.',
+        ),
       };
       await db.collection('payments').insertOne({
         ...result,
-        'payment_id': provider.newPaymentId(),
+        'payment_id': paymentId,
         'user_id': claims.subject,
         'order_id': orderId,
         'status': 'pending',
         'created_at': DateTime.now().toUtc().toIso8601String(),
       });
-      return Response.json(statusCode: 201, body: result);
+      return Response.json(
+        statusCode: 201,
+        body: {...result, 'payment_id': paymentId},
+      );
     } finally {
       client.close();
     }
