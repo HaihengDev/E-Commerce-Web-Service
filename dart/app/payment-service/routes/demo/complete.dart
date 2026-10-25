@@ -1,9 +1,12 @@
 import 'dart:convert';
 
 import 'package:dart_frog/dart_frog.dart';
+import 'package:dotenv/dotenv.dart' as dotenv;
+import 'package:http/http.dart' as http;
 import 'package:mongo_dart/mongo_dart.dart';
 import 'package:payment_service/config/db.dart';
 import 'package:payment_service/security/token_claims.dart';
+import 'package:payment_service/services/order_fulfillment_service.dart';
 
 Future<Response> onRequest(RequestContext context) async {
   if (context.request.method != HttpMethod.post) {
@@ -30,6 +33,13 @@ Future<Response> onRequest(RequestContext context) async {
   }
 
   try {
+    final env = dotenv.DotEnv(includePlatformEnvironment: true)..load();
+    if (env['PAYMENT_DEMO_MODE'] != 'true') {
+      return Response.json(
+        statusCode: 403,
+        body: {'message': 'Local demo payments are disabled.'},
+      );
+    }
     final body = jsonDecode(await context.request.body());
     if (body is! Map<String, dynamic> || body['payment_id'] is! String) {
       return Response.json(
@@ -52,54 +62,37 @@ Future<Response> onRequest(RequestContext context) async {
         body: {'message': 'Demo payment not found.'},
       );
     }
-    if (payment['status'] == 'paid') {
-      return Response.json(body: {
-        'payment_id': payment['payment_id'],
-        'order_id': payment['order_id'],
-        'status': 'paid',
-        'demo': true,
-      });
-    }
-    if (payment['status'] != 'pending') {
+    if (payment['status'] != 'pending' && payment['status'] != 'paid') {
       return Response.json(
         statusCode: 409,
         body: {'message': 'Demo payment is not pending.'},
       );
     }
 
-    final paidAt = DateTime.now().toUtc().toIso8601String();
-    final update = await payments.updateOne(
-      where
-          .eq('payment_id', body['payment_id'])
-          .eq('user_id', claims.subject)
-          .eq('status', 'pending'),
-      modify.set('status', 'paid').set('paid_at', paidAt),
-    );
-    if (update.nMatched == 0) {
-      return Response.json(
-        statusCode: 409,
-        body: {'message': 'Demo payment is no longer pending.'},
+    final client = http.Client();
+    try {
+      final order = await OrderFulfillmentService(db, client).fulfillPaidOrder(
+        payment['order_id'] as String,
+        expectedUserId: claims.subject,
       );
+      await payments.updateOne(
+        where.eq('payment_id', payment['payment_id']),
+        modify.set('status', 'paid'),
+      );
+      return Response.json(
+        body: {
+          'payment_id': payment['payment_id'],
+          'order_id': payment['order_id'],
+          'status': 'paid',
+          'demo': true,
+          'items': order['items'],
+        },
+      );
+    } finally {
+      client.close();
     }
-
-    await db.collection('orders').updateOne(
-      where
-          .eq('order_id', payment['order_id'])
-          .eq('user_id', claims.subject),
-      modify.set('status', 'paid').set('paid_at', paidAt),
-    );
-
-    return Response.json(body: {
-      'payment_id': payment['payment_id'],
-      'order_id': payment['order_id'],
-      'status': 'paid',
-      'demo': true,
-    });
   } on FormatException {
-    return Response.json(
-      statusCode: 400,
-      body: {'message': 'Invalid JSON.'},
-    );
+    return Response.json(statusCode: 400, body: {'message': 'Invalid JSON.'});
   } catch (_) {
     return Response.json(
       statusCode: 500,

@@ -29,6 +29,12 @@ money. The response includes a `payment_id` and a `next_step`. Send that
 Disable demo payments by setting `PAYMENT_DEMO_MODE=false` when you do not want
 the simulated completion route available.
 
+After any payment method succeeds, payment-service asks product-service to
+issue one fake serial code per unit, then stores those codes on the paid order.
+The customer can retrieve them using `GET /api/orders` with their user token.
+These `DEMO-` codes are placeholders for demonstrating digital fulfillment,
+not valid software licenses.
+
 Endpoints:
 
 - `POST /` with a user bearer token and `{"order_id":"...","provider":"stripe|paypal|demo","return_url":"https://...","cancel_url":"https://..."}` creates a checkout. Demo mode does not require return or cancel URLs.
@@ -40,5 +46,4 @@ Use Stripe test mode credentials and PayPal Sandbox credentials for real
 provider sandbox flows. Checkout totals are calculated in USD from product
 prices and percentage discounts. Provider payments are marked paid only after
 PayPal capture or a verified Stripe webhook. Demo payments are clearly marked
-as simulated. The API does not support refunds, taxes, shipping, or inventory
-reservation.
+as simulated. The API does not support refunds, taxes, or shipping.

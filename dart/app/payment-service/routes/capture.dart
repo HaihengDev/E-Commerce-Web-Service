@@ -5,6 +5,7 @@ import 'package:http/http.dart' as http;
 import 'package:mongo_dart/mongo_dart.dart';
 import 'package:payment_service/config/db.dart';
 import 'package:payment_service/security/token_claims.dart';
+import 'package:payment_service/services/order_fulfillment_service.dart';
 import 'package:payment_service/services/payment_provider.dart';
 
 Future<Response> onRequest(RequestContext context) async {
@@ -49,25 +50,55 @@ Future<Response> onRequest(RequestContext context) async {
       );
     final client = http.Client();
     try {
-      final result = await PaymentProvider(client)
-          .capturePayPalOrder(body['paypal_order_id'] as String);
-      if (result['status'] == 'COMPLETED') {
+      final Map<String, dynamic> result;
+      if (payment['status'] == 'captured') {
+        result = {
+          'provider': 'paypal',
+          'paypal_order_id': payment['paypal_order_id'],
+          'order_id': payment['order_id'],
+          'status': 'COMPLETED',
+        };
+      } else if (payment['status'] == 'paid') {
+        final order = await db
+            .collection('orders')
+            .findOne(
+              where
+                  .eq('order_id', payment['order_id'])
+                  .eq('user_id', claims.subject),
+            );
+        return Response.json(
+          body: {
+            'provider': 'paypal',
+            'paypal_order_id': payment['paypal_order_id'],
+            'order_id': payment['order_id'],
+            'status': 'COMPLETED',
+            'items': order?['items'],
+          },
+        );
+      } else {
+        result = await PaymentProvider(
+          client,
+        ).capturePayPalOrder(body['paypal_order_id'] as String);
+      }
+      if (result['status'] == 'COMPLETED' && result['order_id'] is String) {
+        await db
+            .collection('payments')
+            .updateOne(
+              where.eq('paypal_order_id', body['paypal_order_id']),
+              modify.set('status', 'captured'),
+            );
+        final order = await OrderFulfillmentService(db, client)
+            .fulfillPaidOrder(
+              result['order_id'] as String,
+              expectedUserId: claims.subject,
+            );
         await db
             .collection('payments')
             .updateOne(
               where.eq('paypal_order_id', body['paypal_order_id']),
               modify.set('status', 'paid'),
             );
-        await db
-            .collection('orders')
-            .updateOne(
-              where
-                  .eq('order_id', result['order_id'])
-                  .eq('user_id', claims.subject),
-              modify
-                  .set('status', 'paid')
-                  .set('paid_at', DateTime.now().toUtc().toIso8601String()),
-            );
+        return Response.json(body: {...result, 'items': order['items']});
       }
       return Response.json(body: result);
     } finally {

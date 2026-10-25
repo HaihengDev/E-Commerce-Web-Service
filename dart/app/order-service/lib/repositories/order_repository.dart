@@ -8,9 +8,10 @@ class OrderRepository {
   Future<Map<String, dynamic>> create(
     String userId,
     List<Map<String, dynamic>> items,
+    String orderId,
   ) async {
     final document = {
-      'order_id': ObjectId().oid,
+      'order_id': orderId,
       'user_id': userId,
       'items': items,
       'status': 'pending',

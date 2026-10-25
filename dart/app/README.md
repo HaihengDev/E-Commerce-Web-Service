@@ -6,6 +6,10 @@ in Docker. This keeps `localhost` database URLs in `.env` valid.
 
 ## Start local dependencies
 
+On a fresh checkout, copy `.env.example` to `.env` and replace `JWT_SECRET` and
+`INTERNAL_SERVICE_TOKEN` with separate random secrets of at least 32 characters.
+Your existing local `.env` already has generated values; do not commit it.
+
 From the repository root:
 
 ```sh
@@ -52,6 +56,9 @@ their corresponding services. Merchant operations are available through
 `/api/merchant/...`.
 
 The shared `JWT_SECRET` in `.env` is used by all services. Keep `.env` private.
+Order, payment, and product services also use the same private
+`INTERNAL_SERVICE_TOKEN` for protected inventory operations; keep it private as
+well.
 Payment checkout also requires provider credentials (`STRIPE_SECRET_KEY`,
 `STRIPE_WEBHOOK_SECRET`, `PAYPAL_CLIENT_ID`, and `PAYPAL_CLIENT_SECRET`) before
 Stripe or PayPal checkout can complete. For an offline local demo, the provided
@@ -64,7 +71,9 @@ demos.
 ## Current feature gaps
 
 This is a working microservice foundation, not yet a complete production store.
-Order creation does not reserve or decrement stock, and checkout does not yet
-implement shipping, taxes, refunds, or inventory compensation. There is no
-storefront UI or admin dashboard in this repository. These require product and
-business decisions in addition to code changes.
+Orders reserve stock at creation. Successful payments issue one clearly fake
+`DEMO-` serial code per unit and attach the codes to the customer's order.
+Stock held by an unpaid or abandoned order is not automatically released yet.
+Shipping, taxes, refunds, and a storefront UI or admin dashboard are not
+implemented yet. The generated codes are demo placeholders, not valid software
+licenses; replace them with real license inventory before selling software.

@@ -1,8 +1,10 @@
 import 'dart:convert';
 import 'package:dart_frog/dart_frog.dart';
+import 'package:mongo_dart/mongo_dart.dart';
 import 'package:order_service/config/db.dart';
 import 'package:order_service/repositories/order_repository.dart';
 import 'package:order_service/security/token_claims.dart';
+import 'package:order_service/services/inventory_client.dart';
 
 Future<Response> onRequest(RequestContext context) async {
   try {
@@ -51,14 +53,42 @@ Future<Response> onRequest(RequestContext context) async {
             'quantity': raw['quantity'] as int,
           });
         }
-        final order = await repository.create(claims.subject, items);
-        return Response.json(statusCode: 201, body: order);
+        final orderId = ObjectId().oid;
+        final inventory = InventoryClient();
+        try {
+          await inventory.reserve(
+            orderId: orderId,
+            userId: claims.subject,
+            items: items,
+          );
+          try {
+            final order = await repository.create(
+              claims.subject,
+              items,
+              orderId,
+            );
+            return Response.json(statusCode: 201, body: order);
+          } catch (_) {
+            await inventory.release(orderId: orderId, userId: claims.subject);
+            rethrow;
+          }
+        } finally {
+          inventory.close();
+        }
       default:
         return Response.json(
           statusCode: 405,
           body: {'message': 'Method not allowed.'},
         );
     }
+  } on InventoryUnavailable catch (error) {
+    return Response.json(
+      statusCode: 409,
+      body: {
+        'message': 'Insufficient stock or product not found.',
+        if (error.productId != null) 'product_id': error.productId,
+      },
+    );
   } on FormatException {
     return _badRequest('Invalid JSON.');
   } catch (error) {

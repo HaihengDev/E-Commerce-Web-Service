@@ -3,8 +3,10 @@ import 'dart:convert';
 import 'package:crypto/crypto.dart';
 import 'package:dart_frog/dart_frog.dart';
 import 'package:dotenv/dotenv.dart' as dotenv;
+import 'package:http/http.dart' as http;
 import 'package:mongo_dart/mongo_dart.dart';
 import 'package:payment_service/config/db.dart';
+import 'package:payment_service/services/order_fulfillment_service.dart';
 
 Future<Response> onRequest(RequestContext context) async {
   if (context.request.method != HttpMethod.post)
@@ -34,22 +36,25 @@ Future<Response> onRequest(RequestContext context) async {
           session['client_reference_id'];
       if (orderId is String && session['payment_status'] == 'paid') {
         final db = await Database.connection;
-        await db
+        final payment = await db
             .collection('payments')
-            .updateOne(
-              where.eq('session_id', session['id']),
-              modify
-                  .set('status', 'paid')
-                  .set('paid_at', DateTime.now().toUtc().toIso8601String()),
+            .findOne(
+              where
+                  .eq('provider', 'stripe')
+                  .eq('session_id', session['id'])
+                  .eq('order_id', orderId),
             );
-        await db
-            .collection('orders')
-            .updateOne(
-              where.eq('order_id', orderId),
-              modify
-                  .set('status', 'paid')
-                  .set('paid_at', DateTime.now().toUtc().toIso8601String()),
+        if (payment != null) {
+          final client = http.Client();
+          try {
+            await OrderFulfillmentService(db, client).fulfillPaidOrder(
+              orderId,
+              expectedUserId: payment['user_id'] as String,
             );
+          } finally {
+            client.close();
+          }
+        }
       }
     }
     return Response.json(body: {'received': true});
