@@ -20,6 +20,27 @@ MongoDB is published on `localhost:27017`, and Redis is published on
 `localhost:6379`. Data persists in the `mongo-data` and `redis-data` Docker
 volumes.
 
+## Run the full stack with Docker
+
+The Compose file can run MongoDB, Redis, all six Dart services, and the API
+gateway. Make sure `.env` exists in the repository root (copy `.env.example` if
+needed, then set the required secrets), then run:
+
+```sh
+docker compose up --build
+```
+
+The gateway is available at `http://localhost:8080`. The individual services
+are also published on ports 8081 through 8086. Compose configures service URLs
+and database connections to use container names, so these containers do not
+use the host-only URLs in `.env` for internal communication. Provider settings
+such as `STRIPE_SECRET_KEY` and `STRIPE_WEBHOOK_SECRET` are still read from
+`.env`.
+
+Stop the stack with `Ctrl+C`, or run `docker compose down` in another terminal.
+The MongoDB and Redis data volumes are preserved when the stack stops. To follow
+logs later, run `docker compose logs -f`.
+
 ## Start the services
 
 Open a terminal for each service. In each terminal, run the following from the

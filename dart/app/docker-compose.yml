@@ -26,6 +26,169 @@ services:
       timeout: 3s
       retries: 5
 
+  auth-service:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      args:
+        SERVICE_DIR: auth-service
+        PORT: 8081
+    env_file: .env
+    environment:
+      MONGO_URI_AUTH_SERVICE: mongodb://mongo:27017/ecommerce_auth
+    depends_on:
+      mongo:
+        condition: service_healthy
+    ports:
+      - "8081:8081"
+    restart: unless-stopped
+
+  category-service:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      args:
+        SERVICE_DIR: category-service
+        PORT: 8082
+    env_file: .env
+    environment:
+      MONGO_URI_CATEGORY_SERVICE: mongodb://mongo:27017/ecommerce_categories
+      REDIS_URL: redis://redis:6379
+    depends_on:
+      mongo:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    ports:
+      - "8082:8082"
+    restart: unless-stopped
+
+  merchant-service:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      args:
+        SERVICE_DIR: merchant-service
+        PORT: 8083
+    env_file: .env
+    environment:
+      AUTH_SERVICE_URL: http://auth-service:8081
+      CATEGORY_SERVICE_URL: http://category-service:8082/categories
+      PRODUCT_SERVICE_URL: http://product-service:8086
+      ORDER_SERVICE_URL: http://order-service:8084/orders
+      REDIS_URL: redis://redis:6379
+    depends_on:
+      auth-service:
+        condition: service_started
+      category-service:
+        condition: service_started
+      product-service:
+        condition: service_started
+      order-service:
+        condition: service_started
+      redis:
+        condition: service_healthy
+    ports:
+      - "8083:8083"
+    restart: unless-stopped
+
+  order-service:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      args:
+        SERVICE_DIR: order-service
+        PORT: 8084
+    env_file: .env
+    environment:
+      MONGO_URI_ORDER_SERVICE: mongodb://mongo:27017/ecommerce_orders
+      PRODUCT_SERVICE_URL: http://product-service:8086
+    depends_on:
+      mongo:
+        condition: service_healthy
+      product-service:
+        condition: service_started
+    ports:
+      - "8084:8084"
+    restart: unless-stopped
+
+  payment-service:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      args:
+        SERVICE_DIR: payment-service
+        PORT: 8085
+    env_file: .env
+    environment:
+      MONGO_URI_ORDER_SERVICE: mongodb://mongo:27017/ecommerce_orders
+      PRODUCT_SERVICE_URL: http://product-service:8086
+    depends_on:
+      mongo:
+        condition: service_healthy
+      product-service:
+        condition: service_started
+      order-service:
+        condition: service_started
+    ports:
+      - "8085:8085"
+    restart: unless-stopped
+
+  product-service:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      args:
+        SERVICE_DIR: product-service
+        PORT: 8086
+    env_file: .env
+    environment:
+      MONGO_URI_PRODUCT_SERVICE: mongodb://mongo:27017/ecommerce_products
+      CATEGORY_SERVICE_URL: http://category-service:8082/categories
+      REDIS_URL: redis://redis:6379
+    depends_on:
+      mongo:
+        condition: service_healthy
+      category-service:
+        condition: service_started
+      redis:
+        condition: service_healthy
+    ports:
+      - "8086:8086"
+    restart: unless-stopped
+
+  api-gateway:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      args:
+        SERVICE_DIR: api-gateway
+        PORT: 8080
+    env_file: .env
+    environment:
+      AUTH_SERVICE_URL: http://auth-service:8081
+      PRODUCT_SERVICE_URL: http://product-service:8086
+      CATEGORY_SERVICE_URL: http://category-service:8082/categories
+      ORDER_SERVICE_URL: http://order-service:8084/orders
+      PAYMENT_SERVICE_URL: http://payment-service:8085
+      MERCHANT_SERVICE_URL: http://merchant-service:8083
+    depends_on:
+      auth-service:
+        condition: service_started
+      category-service:
+        condition: service_started
+      merchant-service:
+        condition: service_started
+      order-service:
+        condition: service_started
+      payment-service:
+        condition: service_started
+      product-service:
+        condition: service_started
+    ports:
+      - "8080:8080"
+    restart: unless-stopped
+
 volumes:
   mongo-data:
   redis-data:

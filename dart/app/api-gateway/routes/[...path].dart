@@ -23,7 +23,7 @@ const _serviceDefaults = <String, String>{
   'merchant': 'http://localhost:8002',
 };
 
-Future<Response> onRequest(RequestContext context) async {
+Future<Response> onRequest(RequestContext context, String path) async {
   final request = context.request;
   final segments = request.uri.pathSegments;
 
