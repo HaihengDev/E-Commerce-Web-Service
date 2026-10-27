@@ -27,14 +27,16 @@ Future<Response> onRequest(RequestContext context, String path) async {
   final request = context.request;
   final segments = request.uri.pathSegments;
 
-  if (segments.length < 2 || segments.first != 'api') {
+  if (segments.length < 3 ||
+      segments[0] != 'api' ||
+      segments[1] != 'v1') {
     return Response.json(
       statusCode: 404,
       body: {'message': 'Route not found.'},
     );
   }
 
-  final service = segments[1];
+  final service = segments[2];
   final environmentKey = _serviceEnvironmentKeys[service];
   if (environmentKey == null) {
     return Response.json(
@@ -43,7 +45,7 @@ Future<Response> onRequest(RequestContext context, String path) async {
     );
   }
 
-  final remainingPath = segments.skip(2).join('/');
+  final remainingPath = segments.skip(3).join('/');
   final baseUrl = Platform.environment[environmentKey] ?? _serviceDefaults[service]!;
   final baseUri = Uri.parse(baseUrl);
   final targetUri = baseUri.replace(

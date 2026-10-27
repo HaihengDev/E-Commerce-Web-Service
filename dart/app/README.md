@@ -72,9 +72,9 @@ dart_frog dev --port "$PRODUCT_SERVICE_PORT"
 ```
 
 The gateway is the client entry point at `http://localhost:8080`. For example,
-`POST /api/auth/login`, `GET /api/products`, and `GET /api/categories` route to
+`POST /api/v1/auth/login`, `GET /api/v1/products`, and `GET /api/v1/categories` route to
 their corresponding services. Merchant operations are available through
-`/api/merchant/...`.
+`/api/v1/merchant/...`.
 
 The shared `JWT_SECRET` in `.env` is used by all services. Keep `.env` private.
 Order, payment, and product services also use the same private
@@ -85,7 +85,7 @@ Payment checkout also requires provider credentials (`STRIPE_SECRET_KEY`,
 Stripe or PayPal checkout can complete. For an offline local demo, the provided
 `PAYMENT_DEMO_MODE=true` setting enables simulated checkout with
 `"provider":"demo"`; this marks the order paid without contacting a payment
-provider or moving money. Use `POST /api/payments/demo/complete` with the
+provider or moving money. Use `POST /api/v1/payments/demo/complete` with the
 returned `payment_id` to finish the simulation. Turn demo mode off outside local
 demos.
 
