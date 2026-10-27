@@ -19,9 +19,11 @@ class AppUser {
   };
 
   factory AppUser.fromDocument(Map<String, dynamic> document) => AppUser(
-    id: document['user_id'] as String,
-    email: document['email'] as String,
-    name: document['name'] as String,
-    role: document['role'] as String,
+    // MongoDB records created by older versions may contain an ObjectId here.
+    // Convert it to a stable string before returning it or embedding it in JWTs.
+    id: (document['user_id'] ?? document['_id']).toString(),
+    email: document['email'].toString(),
+    name: document['name'].toString(),
+    role: document['role'].toString(),
   );
 }

@@ -38,7 +38,8 @@ Future<Response> onRequest(RequestContext context) async {
       statusCode: error.statusCode,
       body: {'message': error.message},
     );
-  } catch (error) {
+  } catch (error, stackTrace) {
+    print('Registration failed: $error\n$stackTrace');
     return Response.json(
       statusCode: 500,
       body: {'message': 'Internal server error.', 'error': error.toString()},

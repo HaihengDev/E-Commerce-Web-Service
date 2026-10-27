@@ -23,7 +23,7 @@ class UserRepository {
     required String role,
     required String passwordHash,
   }) async {
-    final document = {
+    final Map<String, dynamic> document = {
       'user_id': ObjectId().oid,
       'email': email,
       'name': name,

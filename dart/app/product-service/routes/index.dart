@@ -106,17 +106,19 @@ Future<Response> _createProduct(
     }
 
     // 4. Build product data
-    final productData = Product.fromJson({
-      'product_name': productName,
-      'imgUrl': imgUrl,
-      'stock': stock,
-      'discount': discount,
-      'price': price.toDouble(),
-      'description': description,
-      'category': category,
-      'merchant_name': claims.name,
-      'merchant_id': claims.subject,
-    });
+    final productData = Product(
+      // ProductService assigns the generated ID after validating the request.
+      product_id: '',
+      product_name: productName,
+      imgUrl: imgUrl,
+      stock: stock,
+      discount: discount,
+      price: price.toDouble(),
+      description: description,
+      category: category,
+      merchant_name: claims.name,
+      merchant_id: claims.subject,
+    );
 
     // 5. Call service layer
     final productCreated = await service.add(productData);

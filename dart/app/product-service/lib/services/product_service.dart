@@ -41,6 +41,7 @@ class ProductService {
       description: product.description,
       category: product.category,
       merchant_name: product.merchant_name!.trim(),
+      merchant_id: product.merchant_id,
     );
 
     return repository.create(data);
