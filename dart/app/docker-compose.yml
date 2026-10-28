@@ -29,7 +29,7 @@ services:
   auth-service:
     build:
       context: .
-      dockerfile: Dockerfile
+      dockerfile: Dockerfile.service
       args:
         SERVICE_DIR: auth-service
         PORT: 8081
@@ -46,7 +46,7 @@ services:
   category-service:
     build:
       context: .
-      dockerfile: Dockerfile
+      dockerfile: Dockerfile.service
       args:
         SERVICE_DIR: category-service
         PORT: 8082
@@ -66,7 +66,7 @@ services:
   merchant-service:
     build:
       context: .
-      dockerfile: Dockerfile
+      dockerfile: Dockerfile.service
       args:
         SERVICE_DIR: merchant-service
         PORT: 8083
@@ -95,7 +95,7 @@ services:
   order-service:
     build:
       context: .
-      dockerfile: Dockerfile
+      dockerfile: Dockerfile.service
       args:
         SERVICE_DIR: order-service
         PORT: 8084
@@ -115,7 +115,7 @@ services:
   payment-service:
     build:
       context: .
-      dockerfile: Dockerfile
+      dockerfile: Dockerfile.service
       args:
         SERVICE_DIR: payment-service
         PORT: 8085
@@ -137,7 +137,7 @@ services:
   product-service:
     build:
       context: .
-      dockerfile: Dockerfile
+      dockerfile: Dockerfile.service
       args:
         SERVICE_DIR: product-service
         PORT: 8086
@@ -160,7 +160,7 @@ services:
   api-gateway:
     build:
       context: .
-      dockerfile: Dockerfile
+      dockerfile: Dockerfile.service
       args:
         SERVICE_DIR: api-gateway
         PORT: 8080

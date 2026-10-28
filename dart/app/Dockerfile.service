@@ -1,0 +1,19 @@
+FROM dart:stable
+
+ARG SERVICE_DIR
+ARG PORT
+WORKDIR /app
+
+RUN dart pub global activate dart_frog_cli
+ENV PATH="/root/.pub-cache/bin:${PATH}"
+
+COPY ${SERVICE_DIR}/pubspec.yaml ./pubspec.yaml
+COPY ${SERVICE_DIR}/pubspec.lock ./pubspec.lock
+RUN dart pub get
+
+COPY ${SERVICE_DIR}/ ./
+RUN dart_frog build
+
+ENV PORT=${PORT}
+EXPOSE ${PORT}
+CMD ["dart", "build/bin/server.dart"]

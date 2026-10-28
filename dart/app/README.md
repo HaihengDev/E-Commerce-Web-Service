@@ -4,6 +4,53 @@ This repository contains separate Dart Frog services and a public API gateway.
 For local development, the services run on your host and MongoDB and Redis run
 in Docker. This keeps `localhost` database URLs in `.env` valid.
 
+## Deploy the whole application as one Render Docker service
+
+The root `Dockerfile` builds all seven Dart Frog applications into one image.
+Its entrypoint starts the six backend services on ports 8081–8086 and the API
+gateway on Render's `PORT` (10000 by default). Only the gateway is exposed to
+the internet; the app services call one another over loopback. MongoDB and
+Redis remain external managed services.
+
+In Render, create one **Web Service** connected to this repository and branch:
+
+1. Select **Docker** as the runtime and set the Dockerfile path to `./Dockerfile`.
+2. Leave Docker Command blank so Render runs the Dockerfile entrypoint.
+3. Add the environment variables below. Use production database/Redis URLs;
+   local Compose hostnames such as `mongo` and `redis` are not reachable on
+   Render. Do not add a `PORT` override unless you also configure the service's
+   exposed port to match it; Render supplies `PORT` for the gateway.
+4. Deploy. The public Render URL serves the API gateway. Enable **Auto-Deploy
+   On Commit** for the connected branch. Future updates deploy when you push:
+
+   ```sh
+   git add .
+   git commit -m "Describe the change"
+   git push origin main
+   ```
+
+Required runtime variables:
+
+| Variable | Value |
+| --- | --- |
+| `MONGO_URI_AUTH_SERVICE` | Mongo connection string ending in `/ecommerce_auth` |
+| `MONGO_URI_CATEGORY_SERVICE` | Mongo connection string ending in `/ecommerce_categories` |
+| `MONGO_URI_PRODUCT_SERVICE` | Mongo connection string ending in `/ecommerce_products` |
+| `MONGO_URI_ORDER_SERVICE` | Mongo connection string ending in `/ecommerce_orders` (used by order and payment services) |
+| `REDIS_URL` | Hosted Redis connection string, including TLS/auth options required by your provider |
+| `JWT_SECRET` | A private random value of at least 32 characters; use the same value for every service |
+| `INTERNAL_SERVICE_TOKEN` | A different private random value of at least 32 characters |
+
+The image sets internal service URLs to loopback addresses automatically. You
+can leave `AUTH_SERVICE_URL`, `CATEGORY_SERVICE_URL`, `MERCHANT_SERVICE_URL`,
+`ORDER_SERVICE_URL`, `PAYMENT_SERVICE_URL`, and `PRODUCT_SERVICE_URL` unset.
+Set Stripe or PayPal credentials if enabling real payments. Keep
+`PAYMENT_DEMO_MODE` off outside local demos.
+
+This is a single deployment unit: a crash in any service restarts the whole
+container, and all seven app processes scale together. Database data stays in
+the external database services.
+
 ## Start local dependencies
 
 On a fresh checkout, copy `.env.example` to `.env` and replace `JWT_SECRET` and

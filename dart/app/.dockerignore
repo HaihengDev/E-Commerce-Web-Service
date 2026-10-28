@@ -1,9 +1,7 @@
 .git
-.dart_tool
-build
-.DS_Store
-**/.dart_tool
-**/build
-**/test
 .env
-**/.env
+.env.*
+!.env.example
+**/.dart_tool/
+**/build/
+**/coverage/
