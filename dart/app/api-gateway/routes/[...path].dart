@@ -18,7 +18,7 @@ const _serviceDefaults = <String, String>{
   'auth': 'http://localhost:8003',
   'products': 'http://localhost:8000',
   'categories': 'http://localhost:8001/categories',
-  'orders': 'http://localhost:8004/orders',
+  'orders': 'http://localhost:8004',
   'payments': 'http://localhost:8005',
   'merchant': 'http://localhost:8002',
 };

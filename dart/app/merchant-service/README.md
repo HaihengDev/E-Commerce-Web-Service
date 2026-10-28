@@ -6,7 +6,7 @@ default. Configure `PRODUCT_SERVICE_URL` (default `http://localhost:8000`) and
 to the existing services.
 
 Configure `AUTH_SERVICE_URL` (default `http://localhost:8003`) and
-`ORDER_SERVICE_URL` (default `http://localhost:8004/orders`) to connect to the
+`ORDER_SERVICE_URL` (default `http://localhost:8004`) to connect to the
 authentication and order services. Set `JWT_SECRET` to the same value used by
 those services.
 

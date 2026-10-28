@@ -3,9 +3,9 @@
 Run with `dart_frog dev --port 8004`. Configure `MONGO_URI_ORDER_SERVICE` and
 the same `JWT_SECRET` used by the authentication service.
 
-- `POST /orders` creates a pending order for an authenticated `user` role. The
+- `POST /` creates a pending order for an authenticated `user` role. The
   body is `{"items":[{"product_id":"PRD0001","quantity":2}]}`.
-- `GET /orders` lists only the authenticated user's orders.
+- `GET /` lists only the authenticated user's orders.
 
 Order creation reserves requested stock through product-service. If any line is
 unavailable, the order is rejected with `409 Conflict`. If saving the order

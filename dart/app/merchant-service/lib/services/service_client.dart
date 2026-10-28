@@ -78,7 +78,7 @@ class ServiceClient {
     'PRODUCT_SERVICE_URL' => 'http://localhost:8000',
     'CATEGORY_SERVICE_URL' => 'http://localhost:8001/categories',
     'AUTH_SERVICE_URL' => 'http://localhost:8003',
-    'ORDER_SERVICE_URL' => 'http://localhost:8004/orders',
+    'ORDER_SERVICE_URL' => 'http://localhost:8004',
     _ => throw ArgumentError('Unsupported service URL: $key'),
   };
 }

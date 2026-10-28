@@ -83,7 +83,12 @@ Future<Response> onRequest(RequestContext context) async {
       });
       return Response.json(
         statusCode: 201,
-        body: {...result, 'payment_id': paymentId},
+        body: {
+          ...result,
+          'payment_id': paymentId,
+          'amount_display':
+              '\$${((result['amount_cents'] as int) / 100).toStringAsFixed(2)}',
+        },
       );
     } finally {
       client.close();

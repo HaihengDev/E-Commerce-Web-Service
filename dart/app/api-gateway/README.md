@@ -17,13 +17,13 @@ headers, and response body.
 | `/api/v1/auth/*` | `http://localhost:8003/*` |
 | `/api/v1/products/*` | `http://localhost:8000/*` |
 | `/api/v1/categories/*` | `http://localhost:8001/categories/*` |
-| `/api/v1/orders/*` | `http://localhost:8004/orders/*` |
+| `/api/v1/orders` | `http://localhost:8004/` |
 | `/api/v1/payments/*` | `http://localhost:8005/*` |
 | `/api/v1/merchant/*` | `http://localhost:8002/*` |
 
 For example, `POST /api/v1/auth/login` is forwarded to `POST /login` on
 auth-service, `GET /api/v1/products` is forwarded to `GET /` on product-service,
-and `GET /api/v1/orders` is forwarded to `GET /orders` on order-service.
+and `GET /api/v1/orders` is forwarded to the order-service root route.
 
 Override upstream base URLs with `AUTH_SERVICE_URL`, `PRODUCT_SERVICE_URL`,
 `CATEGORY_SERVICE_URL`, `ORDER_SERVICE_URL`, `PAYMENT_SERVICE_URL`, and
